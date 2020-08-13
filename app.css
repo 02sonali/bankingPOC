@@ -1,0 +1,16 @@
+body{
+    background-color: #F0F0F5;
+}
+.bg-dark{
+    background-color: #181B57 !important;
+}
+.clear{
+    clear: left;
+}
+.logo{
+    width: 40px;
+}
+
+#desk-container div{
+    border: 1px solid;
+}
