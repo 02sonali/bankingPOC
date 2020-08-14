@@ -1,0 +1,19 @@
+#desk-container{
+  height: 300px;
+  border: 1px solid;
+}
+
+#support-agent{
+  position: relative;
+}
+
+#cashier-container{
+  height: 80%;
+}
+
+.element {
+  width: 40px;
+  height: 40px;
+  position: absolute;
+  transition: left 1s ease-out, top 1s ease-out;
+}

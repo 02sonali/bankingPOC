@@ -1,0 +1,35 @@
+body{
+    background-color: #F0F0F5;
+}
+.clear{
+    clear: left;
+}
+.nagarro-logo{
+    width: 80px;
+}
+.logo{
+    width: 40px;
+}
+#desk-container div{
+    border: 1px solid;
+}
+.hidden{
+    display: none;
+}
+.cur-pointer{
+    cursor: pointer;
+}
+
+/* bootstrap override */
+.bg-dark{
+    background-color: #181B57 !important;
+}
+@media (min-width: 576px) {
+    .jumbotron {
+        padding: 1rem 1rem;
+        margin-bottom: 1rem;
+    }
+}
+.lead {
+    font-size: 1rem;
+}
