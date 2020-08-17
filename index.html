@@ -39,6 +39,11 @@
                         <span class="basic" id="stopwatch"></span>
                     </div>
                 </div>
+                <div class="row mb-2 hidden" id="analysis-btn-container">
+                    <div class="col-12 text-right">
+                        <a class="btn btn-secondary disabled" id="analysis-btn" href="simulationAnalysis.html" disabled>Generate Simulation Analysis &nbsp; &#8594;</a>
+                    </div>
+                </div>
             </section>
             <section id="placeholder-image" class="text-center pb-4">
                 <div class="jumbotron jumbotron-fluid text-left bg-info text-white">
@@ -53,10 +58,16 @@
             <section class="p-2" id="simulation-container">
                 <div id="desk-container" class="text-center row">
                     <div id="support-agent" class="col-3">
-                        <span class="badge badge-info">Support Agent Queue</span>
+                        <div class="badge badge-info width100">Support Agent Queue</div>
+                        <div>
+                            <span class="badge badge-secondary"> Waiting:&nbsp;<span id="support-agent-count">0</span></span>
+                        </div>
                     </div>
                     <div id="support-desk" class="col-3 target">
-                        <span class="badge badge-info">Support Desk</span>
+                        <div class="badge badge-info width100">Support Desk</div>
+                        <div>
+                            <span class="badge badge-secondary"> Serving:&nbsp;<span id="support-desk-count">0</span></span>
+                        </div>
                         <div>
                             <img src="./images/support-desk.png" class="justify-content-end logo">
                         </div>
@@ -64,10 +75,20 @@
                     <div id="last-container" class="col-6">
                         <div id="cashier-container" class="row">
                             <div id="cashier-agent" class="col-6">
-                                <span class="badge badge-info">Cashier Agent Queue</span>
+                                <div class="badge badge-info width100">Cashier Agent Queue</div>
+                                <div>
+                                    <span class="badge badge-secondary"> Waiting:&nbsp;
+                                        <span id="cashier-agent-count">0</span>
+                                    </span>
+                                </div>
                             </div>
                             <div id="cashier-desk" class="col-6">
-                                <span class="badge badge-info">Cashier Desk</span>
+                                <div class="badge badge-info width100">Cashier Desk</div>
+                                <div>
+                                    <span class="badge badge-secondary"> Serving:&nbsp;
+                                        <span id="cashier-desk-count">0</span>
+                                    </span>
+                                </div>
                                 <div>
                                     <img src="./images/cashier.png" class="justify-content-end logo">
                                 </div>
@@ -75,7 +96,12 @@
                         </div>
                         <div id="exit-queue" class="row">
                             <div class="col-12">
-                                <span class="badge badge-info">Exit</span>
+                                <div class="badge badge-info width100">Exit</div>
+                                <div>
+                                    <span class="badge badge-secondary"> Served Customers:&nbsp;
+                                        <span id="exit-count">0</span>
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -110,5 +136,6 @@
         <script src="https://cdn.jsdelivr.net/npm/echarts@4.8.0/dist/echarts.simple.min.js" defer></script>
         <script type="text/javascript" src="./index.js" defer></script>
         <script type="text/javascript" src="./stopwatch.js" defer></script>
+        <script type="text/javascript" src="./normalizeData.js" defer></script>
     </body>
 </html>

@@ -4,15 +4,16 @@ $(document).ready(function() {
 
   $(document).on('change','select#branch-list',function(){
     let selectedVal = $(this).children("option:selected").val();
+    $('#stopwatch').html("");
     if(selectedVal) {
       $('#start-btn').removeAttr('disabled').removeClass('disabled');
-      fetch(`data/data_branch_number_${selectedVal}.json`).then(res => res.json()).then(data => console.log(data))
+      fetch(`data/data_branch_number_${selectedVal}.json`).then(res => res.json())
+      .then(data => createStopWatch(data))
     } else {
       $('#start-btn').attr('disabled', 'disabled');
       $('#start-btn').addClass('disabled');
     }
   });
-  createStopWatch();
 });
 
 function refreshWindow(){
@@ -20,15 +21,22 @@ function refreshWindow(){
 }
 
 var stopWatch;
-function createStopWatch() {
+function createStopWatch(branchData) {
+  let dataFunctions = new generateNormalizedData();
   let stopwatchElement = $('#stopwatch');
-  stopwatch =  new Stopwatch(stopwatchElement[0]);
+  stopwatch =  new Stopwatch(stopwatchElement[0], {data: branchData, dataFunctions: dataFunctions});
+  resetSimulation();
 }
 
 function startSimulation() {
-  /***** order matters here *******/
+  /***** DOM manipulations *******/
   $('#placeholder-image').hide();
   $('#simulation-container').show();
+  $('#analysis-btn-container').show();
+  $('#analysis-btn').addClass('disabled');
+  $('#analysis-btn').attr('disabled', 'disabled');
+  $('#branch-list').addClass('disabled');
+  $('#branch-list').attr('disabled', 'disabled');
   /*******************************/
   // createCustomers();
   startWatch();
@@ -36,12 +44,18 @@ function startSimulation() {
 
 function stopSimulation() {
   stopWatch();
+  $('#analysis-btn').removeClass('disabled');
+  $('#analysis-btn').removeAttr('disabled');
+  $('#branch-list').removeClass('disabled');
+  $('#branch-list').removeAttr('disabled');
 }
 
 function resetSimulation() {
   stopwatch.resetWatch();
   $('#reset-btn').hide();
   $('#start-btn').show();
+  $('#branch-list').removeClass('disabled');
+  $('#branch-list').removeAttr('disabled');
 }
 
 function startWatch() {
@@ -84,4 +98,8 @@ function createCustomers() {
     elements[i].style.left = xT + 'px';
     elements[i].style.top = yT + 'px';
   }
+}
+
+function showAnalysisScreen() {
+  
 }

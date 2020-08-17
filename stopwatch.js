@@ -9,7 +9,7 @@ var Stopwatch = function(elem, options) {
     options = options || {};
     options.delay = options.delay || 10;
   
-    // append elements     
+    // append elements
     elem.appendChild(timer);
     
     // initialize
@@ -35,14 +35,20 @@ var Stopwatch = function(elem, options) {
     }
     
     function reset() {
-      clock = 0;
-      render(0);
+        clock = 0;
+        render(0);
+        options.dataFunctions.resetData();
+        for(let i=0; i< options.data.customerData.length; i++){
+            options.data.customerData[i].hasExited = false;
+            options.data.customerData[i].isAdded = false;
+        }
     }
     
     function update() {
         //run timer for 7hr only else stop
         if(clock <= 42000) {
             clock += delta();
+            getDeskCounts(clock/100, options.data);
             render();
         } else {
             stop();
@@ -70,6 +76,43 @@ var Stopwatch = function(elem, options) {
       
       offset = now;
       return d;
+    }
+
+    function getDeskCounts(currentTime, data) {
+        for(let i=0; i<data.customerData.length; i++){
+            let clockTime = currentTime.toString().split('.')[0];
+            let supportQueueTime = data.customerData[i].support_queue_arrival.toString().split('.')[0];
+            let supportDeskTime = data.customerData[i].support_entry_time.toString().split('.')[0];
+            let cashierQueueTime = data.customerData[i].cashier_queue_arrival.toString().split('.')[0];
+            let cashierDeskTime = data.customerData[i].cashier_entry_time.toString().split('.')[0];
+            let exitTime = data.customerData[i].completed_time.toString().split('.')[0];
+            if(clockTime === supportQueueTime && !data.customerData[i].hasExited && !data.customerData[i].isAdded) {
+                data.customerData[i].isAdded = true;
+                options.dataFunctions.addToSupportQueue();
+            } 
+            if(clockTime === supportDeskTime && data.customerData[i].support_entry_time > 0 && !data.customerData[i].hasExited) {
+                options.dataFunctions.addToSupportDesk();
+                options.dataFunctions.removeFromSupportQueue();
+            }
+            if(clockTime === cashierQueueTime && data.customerData[i].cashier_queue_arrival > 0){
+                options.dataFunctions.addToCashierQueue();
+            }
+            if((clockTime === cashierDeskTime) && (data.customerData[i].cashier_entry_time > 0) && (data.customerData[i].cashier_queue_arrival > 0)) {
+                options.dataFunctions.addToCashierDesk();
+                options.dataFunctions.removeFromCashierQueue();
+            }
+            if(clockTime === exitTime && clockTime!=="0") {
+                if(data.customerData[i].cashier_entry_time > 0) {
+                    options.dataFunctions.removeFromCashierDesk();
+                } if(data.customerData[i].support_entry_time > 0) {
+                    options.dataFunctions.removeFromSupportDesk();
+                }
+                if(!data.customerData[i].hasExited) {
+                    data.customerData[i].hasExited = true;
+                    options.dataFunctions.addToExit();
+                }
+            }
+        }
     }
     
     // public API
