@@ -109,7 +109,6 @@ var Stopwatch = function(elem, options) {
             if(clockTime === cashierQueueTime && data.customerData[i].cashier_queue_arrival > 0 && !data.customerData[i].hasExited){
                 options.dataFunctions.addToCashierQueue();
                 options.dataFunctions.updateCashierQueue();
-                options.dataFunctions.updateSupportDeskCustomers();
             }
             if((clockTime === cashierDeskTime) && (data.customerData[i].cashier_entry_time > 0) && (data.customerData[i].cashier_queue_arrival > 0) && !data.customerData[i].isAddedToCashierDesk && !data.customerData[i].hasExited) {
                 data.customerData[i].isAddedToCashierDesk = true;

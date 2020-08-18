@@ -20,6 +20,7 @@
   height: 20px;
   position: absolute;
   transition: left 2s ease-out, top 2s ease-out;
+  z-index: 1;
 }
 
 .exit-element{

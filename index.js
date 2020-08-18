@@ -30,7 +30,7 @@ function refreshWindow(){
 }
 
 function createStopWatch(branchData) {
-  let dataFunctions = new generateNormalizedData();
+  let dataFunctions = new generateNormalizedData(branchData.totalSupportAgents, branchData.totalCashierAgents);
   let stopwatchElement = $('#stopwatch');
   stopwatch =  new Stopwatch(stopwatchElement[0], {data: branchData, dataFunctions: dataFunctions});
   resetSimulation();

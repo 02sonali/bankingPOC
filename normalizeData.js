@@ -12,15 +12,17 @@ let neutral_feedback = "0%";
 let avg_support_desk_utilization = "0";
 let avg_cashier_desk_utilization = "0";
 
-var generateNormalizedData = function() {
+var generateNormalizedData = function(supportAgentsCount, cashierAgentsCount) {
     function addToSupportQueue() {
         support_agent_count++;
         $('#support-queue-count').html(support_agent_count);
     }
 
     function addToSupportDesk() {
-        support_desk_count++;
-        $('#support-desk-count').html(support_desk_count);
+        if(support_desk_count < supportAgentsCount) {
+            support_desk_count++;
+            $('#support-desk-count').html(support_desk_count);
+        }
     }
 
     function addToCashierQueue() {
@@ -29,8 +31,10 @@ var generateNormalizedData = function() {
     }
 
     function addToCashierDesk() {
-        cashier_desk_count++;
-        $('#cashier-desk-count').html(cashier_desk_count);
+        if(cashier_desk_count < cashierAgentsCount) {
+            cashier_desk_count++;
+            $('#cashier-desk-count').html(cashier_desk_count);
+        }
     }
     
     function removeFromSupportQueue() {
@@ -111,7 +115,7 @@ var generateNormalizedData = function() {
         $('.cashier-queue-element').each(function() {
             $(this).css({
                 left : Math.random() * ($('#cashier-agent-block').width() - $(this).width()) + 10,
-                top : Math.random() * ($('#cashier-agent-block').height() - $(this).height()) + 60
+                top : Math.random() * ($('#cashier-agent-block').height() -20 - $(this).height()) + 60,
             });
         });
     }
@@ -124,7 +128,7 @@ var generateNormalizedData = function() {
         $('.cashier-desk-element').each(function() {
             $(this).css({
                 left : Math.random() * ($('#cashier-desk-block').width() - $(this).width()) + 10,
-                top : Math.random() * ($('#cashier-desk-block').height() - ($(this).height())) + 60,
+                top : Math.random() * ($('#cashier-desk-block').height() -20 - ($(this).height())) + 60,
             });
         });
     }
