@@ -19,6 +19,9 @@ body{
 .width100{
     width: 100%;
 }
+.height80{
+    height: 80%;
+}
 
 /* bootstrap override */
 .bg-dark{

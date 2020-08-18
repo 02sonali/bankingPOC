@@ -34,7 +34,7 @@
                         <button class="btn btn-danger hidden" onclick="stopSimulation()" id="stop-btn">  &#9635; &nbsp;Stop Simulation</button>
                         <button class="btn btn-secondary hidden" onclick="resetSimulation()" id="reset-btn">  &#8634; &nbsp;Reset Simulation</button>
                     </div>
-                    <div class="col-3 text-right">
+                    <div class="col-3 text-right hidden" id="timer">
                         <span>Time:</span>
                         <span class="basic" id="stopwatch"></span>
                     </div>
@@ -57,20 +57,28 @@
             </section>
             <section class="p-2" id="simulation-container">
                 <div id="desk-container" class="text-center row">
-                    <div id="support-agent" class="col-3">
+                    <div class="col-3">
                         <div class="badge badge-info width100">Support Agent Queue</div>
                         <div>
-                            <span class="badge badge-secondary"> Waiting:&nbsp;<span id="support-agent-count">0</span></span>
+                            <span class="badge badge-secondary"> Waiting:&nbsp;<span id="support-queue-count">0</span></span>
                         </div>
+                        <div id="support-agent" class="width100 height80"></div>
+                        <img src="./images/entry.jpg" class="entry-logo">
                     </div>
-                    <div id="support-desk" class="col-3 target">
-                        <div class="badge badge-info width100">Support Desk</div>
+                    <div id="support-desk" class="col-3">
+                        <div class="badge badge-info width100">Support Desk
+                            <span class="badge badge-warning ml-2">
+                                <span id="support-agent-count">0</span>
+                                <span>&nbsp;Agents</span>
+                            </span>
+                        </div>
                         <div>
                             <span class="badge badge-secondary"> Serving:&nbsp;<span id="support-desk-count">0</span></span>
                         </div>
                         <div>
-                            <img src="./images/support-desk.png" class="justify-content-end logo">
+                            <img src="./images/laptop2.png" class="justify-content-end logo">
                         </div>
+                        <div class="width100 height80" id="support-desk-block"></div>
                     </div>
                     <div id="last-container" class="col-6">
                         <div id="cashier-container" class="row">
@@ -78,12 +86,18 @@
                                 <div class="badge badge-info width100">Cashier Agent Queue</div>
                                 <div>
                                     <span class="badge badge-secondary"> Waiting:&nbsp;
-                                        <span id="cashier-agent-count">0</span>
+                                        <span id="cashier-queue-count">0</span>
                                     </span>
                                 </div>
+                                <div id="cashier-agent-block" class="width100 height80"></div>
                             </div>
                             <div id="cashier-desk" class="col-6">
-                                <div class="badge badge-info width100">Cashier Desk</div>
+                                <div class="badge badge-info width100">Cashier Desk
+                                    <span class="badge badge-warning ml-2">
+                                        <span id="cashier-agent-count">0</span>
+                                        <span>&nbsp;Agents</span>
+                                    </span>
+                                </div>
                                 <div>
                                     <span class="badge badge-secondary"> Serving:&nbsp;
                                         <span id="cashier-desk-count">0</span>
@@ -92,6 +106,7 @@
                                 <div>
                                     <img src="./images/cashier.png" class="justify-content-end logo">
                                 </div>
+                                <div id="cashier-desk-block" class="width100 height80"></div>
                             </div>
                         </div>
                         <div id="exit-queue" class="row">
@@ -102,6 +117,8 @@
                                         <span id="exit-count">0</span>
                                     </span>
                                 </div>
+                                <div id="exit-block" class="width100 height80"></div>
+                                <img src="./images/exit.jpg" class="exit-logo">
                             </div>
                         </div>
                     </div>

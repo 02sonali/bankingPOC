@@ -3,17 +3,43 @@
   border: 1px solid #cccccc;
 }
 
+#desk-container > div{
+  border: 1px solid #cccccc;
+}
+
 #support-agent{
   position: relative;
 }
 
 #cashier-container{
-  height: 75%;
+  height: 65%;
 }
 
-.element {
-  width: 40px;
-  height: 40px;
+.element, .desk-element, .cashier-queue-element, .cashier-desk-element{
+  width: 20px;
+  height: 20px;
   position: absolute;
-  transition: left 1s ease-out, top 1s ease-out;
+  transition: left 2s ease-out, top 2s ease-out;
+}
+
+.exit-element{
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  transition: all 0.2s ease;
+  left: 10px;
+}
+
+.entry-logo{
+  width: 70px;
+  position: absolute;
+  left: 4px;
+  bottom: 5px;
+}
+
+.exit-logo{
+  position: absolute;
+  width: 70px;
+  right: 4px;
+  bottom: -51px;
 }
