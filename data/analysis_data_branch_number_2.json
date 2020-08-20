@@ -1,1 +1,1 @@
-{"Branch_Number": 2, "customerData": ["Average_Support_Wait Time", "Average_Cashier_Wait_Time", "Completed_Customers", "Positive_Feedback", "Neutral_Feedback", "Negative_Feedback", "Support_Utilization", "Cashier_Utilization", "financial_transactions"]}
+{"Branch_Number": 2, "customerData": [{"Average_Support_Wait Time": 34.01, "Average_Cashier_Wait_Time": 10.12, "Completed_Customers": 779, "Positive_Feedback": 14.47, "Neutral_Feedback": 42.55, "Negative_Feedback": 42.97, "Support_Utilization": 85.65, "Cashier_Utilization": 92.3, "financial_transactions": 70}]}

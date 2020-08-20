@@ -59,8 +59,11 @@ var Stopwatch = function(elem, options) {
             render();
         } else {
             stop();
+            options.dataFunctions.timerCompleted();
             $('#stop-btn').hide();
             $('#reset-btn').show();
+            $('#analysis-btn').removeClass('disabled');
+            $('#analysis-btn').removeAttr('disabled');
         }
     }
 
@@ -70,7 +73,8 @@ var Stopwatch = function(elem, options) {
         var rhours = Math.floor(hours);
         var minutes = (hours - rhours) * 60;
         var rminutes = Math.round(minutes);
-        return rhours>0 ? rhours + " hr " + rminutes + " min" : rminutes + " min";
+        let isGreaterThanSeven = (rhours === 7 && rminutes > 0);
+        return rhours>0 ? isGreaterThanSeven ? 7 + " hr " + 00 + " min" : rhours + " hr " + rminutes + " min" : rminutes + " min";
     }
     
     function render() {
@@ -90,13 +94,23 @@ var Stopwatch = function(elem, options) {
             let clockTime = currentTime.toString().split('.')[0];
             let supportQueueTime = data.customerData[i].support_queue_arrival.toString().split('.')[0];
             let supportDeskTime = data.customerData[i].support_entry_time.toString().split('.')[0];
+            let supportLeavingTime = data.customerData[i].support_leaving.toString().split('.')[0];
             let cashierQueueTime = data.customerData[i].cashier_queue_arrival.toString().split('.')[0];
             let cashierDeskTime = data.customerData[i].cashier_entry_time.toString().split('.')[0];
-            let exitTime = data.customerData[i].completed_time.toString().split('.')[0];
+            let cashierLeavingTime = data.customerData[i].cashier_leaving.toString().split('.')[0];
             if(clockTime === supportQueueTime && !data.customerData[i].hasExited && !data.customerData[i].isAdded) {
                 data.customerData[i].isAdded = true;
                 options.dataFunctions.addToSupportQueue();
                 options.dataFunctions.updateCustomers();
+                options.dataFunctions.updateAvgSupportWaitTime(data.customerData[i].avg_support_wait_time);
+                options.dataFunctions.updateAvgCashierWaitTime(data.customerData[i].avg_cashier_wait_time);
+                
+                options.chartFunctions.updateLineChart1(clockTime, data.customerData[i].avg_support_wait_time);
+                options.chartFunctions.updateLineChart2(clockTime, data.customerData[i].avg_cashier_wait_time);
+                options.chartFunctions.updateBarChart(clockTime, data.customerData[i].support_customers);
+
+                options.chartFunctions.updateSupportDeskUtilization(data.customerData[i].support_utilization);
+                options.chartFunctions.updateCashierDeskUtilization(data.customerData[i].cashier_utilization);
             } 
             if((clockTime === supportDeskTime) && data.customerData[i].support_entry_time > 0 && !data.customerData[i].hasExited && !data.customerData[i].isAddedToSupportDesk) {
                 data.customerData[i].isAddedToSupportDesk = true;
@@ -106,11 +120,19 @@ var Stopwatch = function(elem, options) {
                 options.dataFunctions.updateCustomers();
                 options.dataFunctions.updateSupportDeskCustomers();
             }
+            if((clockTime === supportLeavingTime) && !data.customerData[i].hasExited) {
+                options.dataFunctions.removeFromSupportDesk();
+                options.dataFunctions.updateSupportDeskCustomers();
+                if(data.customerData[i].cashier_queue_arrival <= 0) {
+                    data.customerData[i].hasExited = true;
+                    options.dataFunctions.addToExit();
+                }
+            }
             if(clockTime === cashierQueueTime && data.customerData[i].cashier_queue_arrival > 0 && !data.customerData[i].hasExited){
                 options.dataFunctions.addToCashierQueue();
                 options.dataFunctions.updateCashierQueue();
             }
-            if((clockTime === cashierDeskTime) && (data.customerData[i].cashier_entry_time > 0) && (data.customerData[i].cashier_queue_arrival > 0) && !data.customerData[i].isAddedToCashierDesk && !data.customerData[i].hasExited) {
+            if((clockTime === cashierDeskTime) && (data.customerData[i].cashier_queue_arrival > 0) && !data.customerData[i].isAddedToCashierDesk && !data.customerData[i].hasExited) {
                 data.customerData[i].isAddedToCashierDesk = true;
                 options.dataFunctions.addToCashierDesk();
                 options.dataFunctions.removeFromCashierQueue();
@@ -118,20 +140,12 @@ var Stopwatch = function(elem, options) {
                 options.dataFunctions.updateCashierQueue();
                 options.dataFunctions.updateCashierDeskCustomers();
             }
-            if(clockTime === exitTime && clockTime!=="0") {
-                if(data.customerData[i].cashier_entry_time > 0) {
-                    options.dataFunctions.removeFromCashierDesk();
-                    
-                } if(data.customerData[i].support_entry_time > 0) {
-                    options.dataFunctions.removeFromSupportDesk();
-                    
-                }
-                if(!data.customerData[i].hasExited) {
-                    data.customerData[i].hasExited = true;
-                    options.dataFunctions.addToExit();
-                }
-                options.dataFunctions.updateSupportDeskCustomers();
+            if((clockTime === cashierLeavingTime) && (data.customerData[i].cashier_entry_time > 0) && !data.customerData[i].hasExited) {
+                options.dataFunctions.removeFromCashierDesk();
                 options.dataFunctions.updateCashierDeskCustomers();
+                
+                data.customerData[i].hasExited = true;
+                options.dataFunctions.addToExit();
             }
         }
     }

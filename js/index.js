@@ -1,4 +1,5 @@
 var stopWatch;
+let chartConfiguration;
 
 $(document).ready(function() {
   
@@ -32,8 +33,23 @@ function refreshWindow(){
 function createStopWatch(branchData) {
   let dataFunctions = new generateNormalizedData(branchData.totalSupportAgents, branchData.totalCashierAgents);
   let stopwatchElement = $('#stopwatch');
-  stopwatch =  new Stopwatch(stopwatchElement[0], {data: branchData, dataFunctions: dataFunctions});
+
+  $('#graph-section').show();
+  
+  /** chart configurations */
+  chartConfiguration = new configureCharts();
+  
+  stopwatch =  new Stopwatch(stopwatchElement[0], {data: branchData, dataFunctions: dataFunctions, chartFunctions: chartConfiguration});
   resetSimulation();
+}
+
+function configureAllCharts() {
+  chartConfiguration.resetCharts();
+  chartConfiguration.configureGauge1();
+  chartConfiguration.configureGauge2();
+  chartConfiguration.configureLineChart1();
+  chartConfiguration.configureLineChart2();
+  chartConfiguration.configureBarChart();
 }
 
 function startSimulation() {
@@ -47,7 +63,6 @@ function startSimulation() {
   $('#branch-list').attr('disabled', 'disabled');
   $('#timer').show();
   /*******************************/
-  // createCustomers();
   startWatch();
 }
 
@@ -60,11 +75,14 @@ function stopSimulation() {
 }
 
 function resetSimulation() {
+  configureAllCharts();
   stopwatch.resetWatch();
   $('#reset-btn').hide();
   $('#start-btn').show();
   $('#branch-list').removeClass('disabled');
   $('#branch-list').removeAttr('disabled');
+  $('#analysis-btn').removeClass('disabled');
+  $('#analysis-btn').removeAttr('disabled');
 }
 
 function startWatch() {
@@ -78,33 +96,3 @@ function stopWatch() {
   $('#start-btn').show();
   $('#stop-btn').hide();
 }
-
-// function createCustomers() {
-//   for (var i = 0; i < 10; i++) {
-//     $('#support-agent').append('<img src="./images/man.png" alt="man" class="element">');
-//   }
-//   $('.element').each(function( index ) {
-//     $(this).css({
-//       left : Math.random() * ($('#support-agent').width() - $(this).width()),
-//       top : Math.random() * ($('#support-agent').height() - $(this).height())
-//     });
-//   });
-
-//   var elements = document.getElementsByClassName('element');
-//   var target = document.getElementById('support-desk-target');
-
-//   // store the x,y coordinates of the target
-//   var xT = target.offsetLeft;
-//   var yT = target.offsetTop;
-
-//   for(var i = 0; i < elements.length; i++) {
-//     var xE = elements[i].offsetLeft;
-//     var yE = elements[i].offsetTop;
-
-//     // set the elements position to their position for a smooth animation
-//     elements[i].style.left = xE + 'px';
-//     elements[i].style.top = yE + 'px';
-//     elements[i].style.left = xT + 'px';
-//     elements[i].style.top = yT + 'px';
-//   }
-// }

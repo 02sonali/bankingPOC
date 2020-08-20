@@ -14,32 +14,32 @@ let avg_cashier_desk_utilization = "0";
 
 var generateNormalizedData = function(supportAgentsCount, cashierAgentsCount) {
     function addToSupportQueue() {
-        support_agent_count++;
+        ++support_agent_count;
         $('#support-queue-count').html(support_agent_count);
     }
 
     function addToSupportDesk() {
         if(support_desk_count < supportAgentsCount) {
-            support_desk_count++;
+            ++support_desk_count;
             $('#support-desk-count').html(support_desk_count);
         }
     }
 
     function addToCashierQueue() {
-        cashier_agent_count++;
+        ++cashier_agent_count;
         $('#cashier-queue-count').html(cashier_agent_count);
     }
 
     function addToCashierDesk() {
         if(cashier_desk_count < cashierAgentsCount) {
-            cashier_desk_count++;
+            ++cashier_desk_count;
             $('#cashier-desk-count').html(cashier_desk_count);
         }
     }
     
     function removeFromSupportQueue() {
         if(support_agent_count > 0) {
-            support_agent_count--;
+            --support_agent_count;
         } else {
             $('#support-agent').html("");
         }
@@ -48,31 +48,39 @@ var generateNormalizedData = function(supportAgentsCount, cashierAgentsCount) {
 
     function removeFromSupportDesk() {
         if(support_desk_count > 0) {
-            support_desk_count--;
+            --support_desk_count;
         } else {
             $('#support-desk-block').html("");
         }
-        $('#support-desk-count').html(support_agent_count);
+        $('#support-desk-count').html(support_desk_count);
     }
 
     function removeFromCashierQueue() {
         if(cashier_agent_count > 0) {
-            cashier_agent_count--;
+            --cashier_agent_count;
         }
         $('#cashier-queue-count').html(cashier_agent_count);
     }
 
     function removeFromCashierDesk() {
         if(cashier_desk_count > 0) {
-            cashier_desk_count--;
+            --cashier_desk_count;
         }
         $('#cashier-desk-count').html(cashier_desk_count);
     }
 
     function addToExit() {
-        exit_queue_count++;
+        ++exit_queue_count;
         $('#exit-count').html(exit_queue_count);
         showExitAnimation();
+    }
+
+    function updateAvgSupportWaitTime(val) {
+        $('#avg-support').html(val);
+    }
+
+    function updateAvgCashierWaitTime(val) {
+        $('#avg-cashier').html(val);
     }
 
     function updateCustomers() {
@@ -167,6 +175,17 @@ var generateNormalizedData = function(supportAgentsCount, cashierAgentsCount) {
         $('#cashier-queue-count').html(cashier_agent_count);
         $('#cashier-desk-count').html(cashier_desk_count);
         $('#exit-count').html(exit_queue_count);
+        updateAvgSupportWaitTime(0);
+        updateAvgCashierWaitTime(0);
+    }
+
+    function timerCompleted() {
+        support_desk_count = 0;
+        cashier_desk_count = 0;
+        $('#support-desk-count').html(support_desk_count);
+        $('#cashier-desk-count').html(cashier_desk_count);
+        updateSupportDeskCustomers();
+        updateCashierDeskCustomers();
     }
 
     return {
@@ -180,6 +199,11 @@ var generateNormalizedData = function(supportAgentsCount, cashierAgentsCount) {
         removeFromCashierDesk: removeFromCashierDesk,
         addToExit: addToExit,
         resetData: resetData,
+        timerCompleted: timerCompleted,
+
+        /***average functions*****/
+        updateAvgSupportWaitTime: updateAvgSupportWaitTime,
+        updateAvgCashierWaitTime: updateAvgCashierWaitTime,
 
         /***movement functions */
         updateCustomers: updateCustomers,

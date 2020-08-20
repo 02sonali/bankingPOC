@@ -44,3 +44,12 @@
   right: 4px;
   bottom: -51px;
 }
+
+#graph-section .badge{
+  padding: .50em 1em;
+}
+
+.graph-container{
+  width: 100%;
+  min-height: 250px;
+}

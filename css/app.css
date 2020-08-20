@@ -22,6 +22,10 @@ body{
 .height80{
     height: 80%;
 }
+.lift-up{
+    position: relative;
+    top: -40px;
+}
 
 /* bootstrap override */
 .bg-dark{
