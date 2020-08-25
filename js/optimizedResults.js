@@ -1,33 +1,33 @@
 $(document).ready(function() {
     getAnalysisData();
 });
-
+let dataObj = {};
 function getAnalysisData() {
-    let promiseOne = new Promise(function(resolve){
-        fetch(`data/analysis_data_branch_number_1.json`)
-        .then(res => res.json())
-        .then(data => resolve(data))
-    });
-    let promiseTwo = new Promise(function(resolve){
-        fetch(`data/analysis_data_branch_number_2.json`)
-        .then(res => res.json())
-        .then(data => resolve(data))
-    });
-    let promiseThree = new Promise(function(resolve){
-        fetch(`data/analysis_data_branch_number_3.json`)
-        .then(res => res.json())
-        .then(data => resolve(data))
-    });
-    Promise.all([promiseOne, promiseTwo, promiseThree]).then(values => {
-        let dataObj = normalizeData(values);
-        renderTable(dataObj);
+    Promise.all([
+        fetch('data/analysis_data_branch_number_1.json'),
+        fetch('data/analysis_data_branch_number_2.json'),
+        fetch('data/analysis_data_branch_number_3.json'),
+        fetch('data/bank_1_optimized.json'),
+        fetch('data/bank_2_optimized.json'),
+        fetch('data/bank_3_optimized.json'),
+    ]).then(function (responses) {
+        return Promise.all(responses.map(function (response) {
+            return response.json();
+        }));
+    }).then(values => {
+        dataObj = normalizeData(values);
+        showLessDetails();
         renderGraphs(dataObj);
     });
 }
 
 function renderGraphs(dataObj) {
-    // renderAvgWaitTimeGraph(dataObj);
-    // renderFeedbackGraph(dataObj);
+    renderAvgWaitTimeGraph(1, dataObj);
+    renderAvgWaitTimeGraph(2, dataObj);
+    renderAvgWaitTimeGraph(3, dataObj);
+    renderUtilizationGraph(1, dataObj);
+    renderUtilizationGraph(2, dataObj);
+    renderUtilizationGraph(3, dataObj);
     renderBranchOneFeedback(dataObj);
     renderBranchTwoFeedback(dataObj);
     renderBranchThreeFeedback(dataObj);
@@ -39,6 +39,7 @@ function getDonutChartOptions(branch) {
             trigger: 'item',
             formatter: '{a} <br/>{b}: {c} ({d}%)'
         },
+        color: ['#48C9B0', '#99A3A4', '#E74C3C'],
         series: [
             {
                 name: 'Simulated Results',
@@ -46,15 +47,16 @@ function getDonutChartOptions(branch) {
                 selectedMode: 'single',
                 radius: [0, '30%'],
                 label: {
-                    show: false
+                    position: 'inside',
+                    formatter: '{c}%'
                 },
                 labelLine: {
                     show: false
                 },
                 data: [
-                    {value: 335, name: 'Positive'},
-                    {value: 679, name: 'Neutral'},
-                    {value: 1548, name: 'Negative'}
+                    {value: 0, name: 'Positive'},
+                    {value: 0, name: 'Neutral'},
+                    {value: 0, name: 'Negative'}
                 ]
             },
             {
@@ -65,12 +67,13 @@ function getDonutChartOptions(branch) {
                     show: false
                 },
                 label: {
-                    show: false
+                    position: 'inside',
+                    formatter: '{c}%'
                 },
                 data: [
-                    {value: 335, name: 'Positive'},
-                    {value: 310, name: 'Neutral'},
-                    {value: 234, name: 'Negative'}
+                    {value: 0, name: 'Positive'},
+                    {value: 0, name: 'Neutral'},
+                    {value: 0, name: 'Negative'}
                 ]
             }
         ]
@@ -92,6 +95,10 @@ function renderBranchOneFeedback(dataObj) {
     chartOptions.series[0].data[0].value = dataObj.positiveFeedback[0];
     chartOptions.series[0].data[1].value = dataObj.neutralFeedback[0];
     chartOptions.series[0].data[2].value = dataObj.negativeFeedback[0];
+    chartOptions.series[1].data[0].value = dataObj.positiveFeedback[3];
+    chartOptions.series[1].data[1].value = dataObj.neutralFeedback[3];
+    chartOptions.series[1].data[2].value = dataObj.negativeFeedback[3];
+    
     branchOneFeedback.setOption(chartOptions);
 }
 
@@ -101,6 +108,9 @@ function renderBranchTwoFeedback(dataObj) {
     chartOptions.series[0].data[0].value = dataObj.positiveFeedback[1];
     chartOptions.series[0].data[1].value = dataObj.neutralFeedback[1];
     chartOptions.series[0].data[2].value = dataObj.negativeFeedback[1];
+    chartOptions.series[1].data[0].value = dataObj.positiveFeedback[4];
+    chartOptions.series[1].data[1].value = dataObj.neutralFeedback[4];
+    chartOptions.series[1].data[2].value = dataObj.negativeFeedback[4];
     branchTwoFeedback.setOption(chartOptions);
 }
 
@@ -110,10 +120,13 @@ function renderBranchThreeFeedback(dataObj) {
     chartOptions.series[0].data[0].value = dataObj.positiveFeedback[2];
     chartOptions.series[0].data[1].value = dataObj.neutralFeedback[2];
     chartOptions.series[0].data[2].value = dataObj.negativeFeedback[2];
+    chartOptions.series[1].data[0].value = dataObj.positiveFeedback[5];
+    chartOptions.series[1].data[1].value = dataObj.neutralFeedback[5];
+    chartOptions.series[1].data[2].value = dataObj.negativeFeedback[5];
     branchFeedback.setOption(chartOptions);
 }
 
-function renderFeedbackGraph(dataObj) {
+function renderUtilizationGraph(branchNumber, dataObj) {
     let barOptions = {
         tooltip: {
             trigger: 'axis',
@@ -121,80 +134,85 @@ function renderFeedbackGraph(dataObj) {
                 type: 'shadow'
             }
         },
-        legend: {
-            data: ['Branch 1', 'Branch 2', 'Branch 3']
-        },
+        barWidth: 30,
+        color: ['#0f4c75', '#00b7c2'],
         xAxis: {
             type: 'category',
-            data: ['Positive Feedback', 'Neutral Feedback', 'Negative Feedback'],
-            name: 'Feedback',
+            data: ['Support Utilization', 'Cashier Utilization'],
+            name: `Branch ${branchNumber}`,
             nameLocation: "center",
             nameGap: 30,
             nameTextStyle: {
                 fontWeight: 'bold'
+            },
+            axisLabel: {
+                fontSize: 10
             }
         },
         yAxis: {
             type: 'value',
             name: 'Percentage',
             nameLocation: "center",
-            nameGap: 30,
+            nameGap: 25,
             nameTextStyle: {
                 fontWeight: 'bold'
             }
         },
         series: [
             {
-                name: 'Branch 1',
+                name: 'Simulated Results',
                 type: 'bar',
                 barGap: 0,
-                data: [dataObj.positiveFeedback[0], dataObj.positiveFeedback[1], dataObj.positiveFeedback[2]]
+                data: [dataObj.supportUtilization[branchNumber- 1], dataObj.supportUtilization[branchNumber + 2]]
             },
             {
-                name: 'Branch 2',
+                name: 'Optimized Results',
                 type: 'bar',
-                stack: 'Average Wait Times',
-                data: [dataObj.neutralFeedback[0], dataObj.neutralFeedback[1], dataObj.neutralFeedback[2]]
-            },
-            {
-                name: 'Branch 3',
-                type: 'bar',
-                barGap: 0,
-                data: [dataObj.negativeFeedback[0], dataObj.negativeFeedback[1], dataObj.negativeFeedback[2]]
+                data: [dataObj.cashierUtilization[branchNumber - 1], dataObj.cashierUtilization[branchNumber + 2]]
             }
         ]
     };
-    var barChart = echarts.init(document.getElementById('feedback-graph'));
+    if(branchNumber === 1) {
+        barOptions.legend = {
+            data: ['Simulated Results', 'Optimized Results'],
+            orient: 'vertical',
+            top: 0,
+            left: 10,
+        }
+    }
+    var barChart = echarts.init(document.getElementById(`utilization-graph-${branchNumber}`));
     barChart.setOption(barOptions);
 }
 
-function renderAvgWaitTimeGraph(dataObj) {
+function renderAvgWaitTimeGraph(branchNumber, dataObj) {
     let barOptions = {
         tooltip: {
             trigger: 'axis',
             axisPointer: {
                 type: 'shadow'
-            }
+            },
+            position: [10, 10]
         },
-        color: ['#48C9B0', '#E74C3C'],
-        legend: {
-            data: ['Average Support Wait Time', 'Average Cashier Wait Time']
-        },
+        barWidth: 40,
+        color: ['#1b6ca8', '#12cad6'],
         xAxis: {
             type: 'category',
-            data: ['Branch 1', 'Branch 2', 'Branch 3'],
-            name: 'Branch',
+            data: ['Simulated Results', 'Optimized Results'],
+            name: `Branch ${branchNumber}`,
             nameLocation: "center",
             nameGap: 30,
             nameTextStyle: {
                 fontWeight: 'bold'
+            },
+            axisLabel: {
+                fontSize: 10
             }
         },
         yAxis: {
             type: 'value',
             name: 'Average Wait Times (min)',
             nameLocation: "center",
-            nameGap: 30,
+            nameGap: 25,
             nameTextStyle: {
                 fontWeight: 'bold'
             }
@@ -203,18 +221,25 @@ function renderAvgWaitTimeGraph(dataObj) {
             {
                 name: 'Average Support Wait Time',
                 type: 'bar',
-                stack: 'Average Wait Times',
-                data: [dataObj.avgSupportWait[0], dataObj.avgSupportWait[1], dataObj.avgSupportWait[2]]
+                barGap: 0,
+                data: [dataObj.avgSupportWait[branchNumber - 1], dataObj.avgSupportWait[branchNumber + 2]]
             },
             {
                 name: 'Average Cashier Wait Time',
                 type: 'bar',
-                stack: 'Average Wait Times',
-                data: [dataObj.avgCashierWait[0], dataObj.avgCashierWait[1], dataObj.avgCashierWait[2]]
+                data: [dataObj.avgCashierWait[branchNumber - 1], dataObj.avgCashierWait[branchNumber + 2]]
             },
         ]
     };
-    var barChart = echarts.init(document.getElementById('avg-wait-time-graph'));
+    if(branchNumber === 1) {
+        barOptions.legend = {
+            data: ['Average Support Wait Time', 'Average Cashier Wait Time'],
+            orient: 'vertical',
+            top: 0,
+            left: 10,
+        }
+    }
+    var barChart = echarts.init(document.getElementById(`avg-wait-time-graph-${branchNumber}`));
     barChart.setOption(barOptions);
 }
 
@@ -250,9 +275,20 @@ function normalizeData(data) {
     return dataObj;
 }
 
-function renderTable(dataObj) {
-    $('#optimization-table').html('');
+function getComparisonSymbol(simulationVal, optimizedVal) {
+    let val;
+    if(simulationVal > optimizedVal) {
+        val = '<i class="fa fa-caret-down text-danger font-18 mr-2" aria-hidden="true"></i>'
+    } else if(simulationVal < optimizedVal){
+        val = '<i class="fa fa-caret-up text-success font-18 mr-2" aria-hidden="true"></i>'
+    }
+    return val;
+}
 
+function showLessDetails() {
+    $('#moreDetails').show();
+    $('#lessDetails').hide();
+    $('#optimized-table').html('');
     let rows = `
     <tr>
         <td scope="row">Support Agents</td>
@@ -266,60 +302,82 @@ function renderTable(dataObj) {
         <td>${dataObj.cashierAgents[1]}</td>
         <td>${dataObj.cashierAgents[2]}</td>
     </tr>
+    `
+    $('#optimized-table').append(rows);
+}
+
+function showCompleteDetails() {
+    $('#moreDetails').hide();
+    $('#lessDetails').show();
+    $('#optimized-table').html('');
+
+    let rows = `
+    <tr>
+        <td scope="row">Support Agents</td>
+        <td>${dataObj.supportAgents[3]}</td>
+        <td>${dataObj.supportAgents[4]}</td>
+        <td>${dataObj.supportAgents[5]}</td>
+    </tr>
+    <tr>
+        <td scope="row">Cashier Agents</td>
+        <td>${dataObj.cashierAgents[3]}</td>
+        <td>${dataObj.cashierAgents[4]}</td>
+        <td>${dataObj.cashierAgents[5]}</td>
+    </tr>
     <tr>
         <td scope="row">Average Support Wait Time</td>
-        <td>${dataObj.avgSupportWait[0]}</td>
-        <td>${dataObj.avgSupportWait[1]}</td>
-        <td>${dataObj.avgSupportWait[2]}</td>
+        <td>${getComparisonSymbol(dataObj.avgSupportWait[0], dataObj.avgSupportWait[3])}${dataObj.avgSupportWait[3]}</td>
+        <td>${getComparisonSymbol(dataObj.avgSupportWait[1], dataObj.avgSupportWait[4])}${dataObj.avgSupportWait[4]}</td>
+        <td>${getComparisonSymbol(dataObj.avgSupportWait[2], dataObj.avgSupportWait[5])}${dataObj.avgSupportWait[5]}</td>
     </tr>
     <tr>
         <td scope="row">Average Cashier Wait Time</td>
-        <td>${dataObj.avgCashierWait[0]}</td>
-        <td>${dataObj.avgCashierWait[1]}</td>
-        <td>${dataObj.avgCashierWait[2]}</td>
+        <td>${getComparisonSymbol(dataObj.avgCashierWait[0], dataObj.avgCashierWait[3])}${dataObj.avgCashierWait[3]}</td>
+        <td>${getComparisonSymbol(dataObj.avgCashierWait[1], dataObj.avgCashierWait[4])}${dataObj.avgCashierWait[4]}</td>
+        <td>${getComparisonSymbol(dataObj.avgCashierWait[2], dataObj.avgCashierWait[5])}${dataObj.avgCashierWait[5]}</td>
     </tr>
     <tr>
         <td scope="row">Support Utilization (%)</td>
-        <td>${dataObj.supportUtilization[0]}</td>
-        <td>${dataObj.supportUtilization[1]}</td>
-        <td>${dataObj.supportUtilization[2]}</td>
+        <td>${getComparisonSymbol(dataObj.supportUtilization[0], dataObj.supportUtilization[3])}${dataObj.supportUtilization[3]}</td>
+        <td>${getComparisonSymbol(dataObj.supportUtilization[1], dataObj.supportUtilization[4])}${dataObj.supportUtilization[4]}</td>
+        <td>${getComparisonSymbol(dataObj.supportUtilization[2], dataObj.supportUtilization[5])}${dataObj.supportUtilization[5]}</td>
     </tr>
     <tr>
         <td scope="row">Cashier Utilization (%)</td>
-        <td>${dataObj.cashierUtilization[0]}</td>
-        <td>${dataObj.cashierUtilization[1]}</td>
-        <td>${dataObj.cashierUtilization[2]}</td>
+        <td>${getComparisonSymbol(dataObj.cashierUtilization[0], dataObj.cashierUtilization[3])}${dataObj.cashierUtilization[3]}</td>
+        <td>${getComparisonSymbol(dataObj.cashierUtilization[1], dataObj.cashierUtilization[4])}${dataObj.cashierUtilization[4]}</td>
+        <td>${getComparisonSymbol(dataObj.cashierUtilization[2], dataObj.cashierUtilization[5])}${dataObj.cashierUtilization[5]}</td>
     </tr>
     <tr>
         <td scope="row">Positive Feedback (%)</td>
-        <td>${dataObj.positiveFeedback[0]}</td>
-        <td>${dataObj.positiveFeedback[1]}</td>
-        <td>${dataObj.positiveFeedback[2]}</td>
+        <td>${getComparisonSymbol(dataObj.positiveFeedback[0], dataObj.positiveFeedback[3])}${dataObj.positiveFeedback[3]}</td>
+        <td>${getComparisonSymbol(dataObj.positiveFeedback[1], dataObj.positiveFeedback[4])}${dataObj.positiveFeedback[4]}</td>
+        <td>${getComparisonSymbol(dataObj.positiveFeedback[2], dataObj.positiveFeedback[5])}${dataObj.positiveFeedback[5]}</td>
     </tr>
     <tr>
         <td scope="row">Neutral Feedback (%)</td>
-        <td>${dataObj.neutralFeedback[0]}</td>
-        <td>${dataObj.neutralFeedback[1]}</td>
-        <td>${dataObj.neutralFeedback[2]}</td>
+        <td>${getComparisonSymbol(dataObj.neutralFeedback[0], dataObj.neutralFeedback[3])}${dataObj.neutralFeedback[3]}</td>
+        <td>${getComparisonSymbol(dataObj.neutralFeedback[1], dataObj.neutralFeedback[4])}${dataObj.neutralFeedback[4]}</td>
+        <td>${getComparisonSymbol(dataObj.neutralFeedback[2], dataObj.neutralFeedback[5])}${dataObj.neutralFeedback[5]}</td>
     </tr>
     <tr>
         <td scope="row">Negative Feedback (%)</td>
-        <td>${dataObj.negativeFeedback[0]}</td>
-        <td>${dataObj.negativeFeedback[1]}</td>
-        <td>${dataObj.negativeFeedback[2]}</td>
+        <td>${getComparisonSymbol(dataObj.negativeFeedback[0], dataObj.negativeFeedback[3])}${dataObj.negativeFeedback[3]}</td>
+        <td>${getComparisonSymbol(dataObj.negativeFeedback[1], dataObj.negativeFeedback[4])}${dataObj.negativeFeedback[4]}</td>
+        <td>${getComparisonSymbol(dataObj.negativeFeedback[2], dataObj.negativeFeedback[5])}${dataObj.negativeFeedback[5]}</td>
     </tr>
     <tr>
         <td scope="row">Financial Transactions</td>
-        <td>${dataObj.financialTransactions[0]}</td>
-        <td>${dataObj.financialTransactions[1]}</td>
-        <td>${dataObj.financialTransactions[2]}</td>
+        <td>${dataObj.financialTransactions[3]}</td>
+        <td>${dataObj.financialTransactions[4]}</td>
+        <td>${dataObj.financialTransactions[5]}</td>
     </tr>
     <tr>
         <td scope="row">Completed Customers</td>
-        <td>${dataObj.completedCustomers[0]}</td>
-        <td>${dataObj.completedCustomers[1]}</td>
-        <td>${dataObj.completedCustomers[2]}</td>
+        <td>${dataObj.completedCustomers[3]}</td>
+        <td>${dataObj.completedCustomers[4]}</td>
+        <td>${dataObj.completedCustomers[5]}</td>
     </tr>
     `
-    $('#optimization-table').append(rows);
+    $('#optimized-table').append(rows);
 }

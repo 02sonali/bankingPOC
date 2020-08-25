@@ -35,6 +35,9 @@ body{
 .font-14{
     font-size: 14px;
 }
+.font-18{
+    font-size: 18px;
+}
 
 /* bootstrap override */
 .bg-dark{

@@ -145,7 +145,6 @@ function renderUtilizationGraph(dataObj) {
             {
                 name: 'Average Cashier Desk Utilization',
                 type: 'bar',
-                stack: 'Average Wait Times',
                 data: [dataObj.cashierUtilization[0], dataObj.cashierUtilization[1], dataObj.cashierUtilization[2]]
             }
         ]
