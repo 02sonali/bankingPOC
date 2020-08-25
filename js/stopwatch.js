@@ -1,5 +1,5 @@
 var Stopwatch = function(elem, options) {
-
+    let customerArrivalCount = 0;
     var timer = createTimer(),
         offset,
         clock,
@@ -37,6 +37,7 @@ var Stopwatch = function(elem, options) {
     function reset() {
         clock = 0;
         render(0);
+        customerArrivalCount = 0;
         options.dataFunctions.resetData();
         for(let i=0; i< options.data.customerData.length; i++){
             options.data.customerData[i].hasExited = false;
@@ -104,10 +105,12 @@ var Stopwatch = function(elem, options) {
                 options.dataFunctions.updateCustomers();
                 options.dataFunctions.updateAvgSupportWaitTime(data.customerData[i].avg_support_wait_time);
                 options.dataFunctions.updateAvgCashierWaitTime(data.customerData[i].avg_cashier_wait_time);
-                
+                options.dataFunctions.updateFeedbacks(data.customerData[i].experience_positive_quotient.toFixed(2), data.customerData[i].experience_neutral_quotient.toFixed(2), data.customerData[i].experience_negative_quotient.toFixed(2));
+
+                ++customerArrivalCount;
                 options.chartFunctions.updateLineChart1(clockTime, data.customerData[i].avg_support_wait_time);
                 options.chartFunctions.updateLineChart2(clockTime, data.customerData[i].avg_cashier_wait_time);
-                options.chartFunctions.updateBarChart(clockTime, data.customerData[i].support_customers);
+                options.chartFunctions.updateBarChart(clockTime, customerArrivalCount);
 
                 options.chartFunctions.updateSupportDeskUtilization(data.customerData[i].support_utilization);
                 options.chartFunctions.updateCashierDeskUtilization(data.customerData[i].cashier_utilization);

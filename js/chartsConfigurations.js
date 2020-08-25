@@ -18,7 +18,8 @@ var configureCharts = function() {
                 data: [{value: 0, name: ''}],
                 axisLine: {
                     lineStyle: {
-                      width: 20
+                      width: 20,
+                      color: [[0.7, '#63869e'], [0.9, '#91c7ae'], [1, '#c23531']]
                     }
                 },
                 axisLabel: {
@@ -104,6 +105,7 @@ var configureCharts = function() {
         tooltip: {
             trigger: 'axis'
         },
+        barWidth: 40,
         xAxis: {
             type: 'category',
             data: ['1', '2', '3','4', '5', '6', '7'],

@@ -26,18 +26,35 @@ body{
     position: relative;
     top: -40px;
 }
+.table {
+    font-size: 0.8em;
+}
+.table tr td:first-child{
+    font-weight: 500;
+}
+.font-14{
+    font-size: 14px;
+}
 
 /* bootstrap override */
 .bg-dark{
     background-color: #181B57 !important;
 }
+.graph-container{
+    width: 100%;
+    min-height: 250px;
+}
+.bordered-container{
+    border: 1px solid #cccccc;
+}
+.lead {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+}
+
 @media (min-width: 576px) {
     .jumbotron {
         padding: 0.5rem 0.5rem;
         margin-bottom: 1rem;
     }
-}
-.lead {
-    font-size: 1.1rem;
-    margin-bottom: 0.5rem;
 }

@@ -6,9 +6,6 @@ let exit_queue_count = 0;
 let avg_support_wait_time = 0;
 let avg_cashier_wait_time = 0;
 let completed_customers = 0;
-let positive_feedback = "0%";
-let negative_feedback = "0%";
-let neutral_feedback = "0%";
 let avg_support_desk_utilization = "0";
 let avg_cashier_desk_utilization = "0";
 
@@ -156,6 +153,12 @@ var generateNormalizedData = function(supportAgentsCount, cashierAgentsCount) {
         });
     }
 
+    function updateFeedbacks(positive, neutral, negative) {
+        $('#positive-val').html(positive + '%');
+        $('#neutral-val').html(neutral + '%');
+        $('#negative-val').html(negative + '%');
+    }
+
     function resetData() {
         support_agent_count = 0;
         support_desk_count = 0; 
@@ -165,9 +168,6 @@ var generateNormalizedData = function(supportAgentsCount, cashierAgentsCount) {
         avg_support_wait_time = 0;
         avg_cashier_wait_time = 0;
         completed_customers = 0;
-        positive_feedback = "0%";
-        negative_feedback = "0%";
-        neutral_feedback = "0%";
         avg_support_desk_utilization = "0";
         avg_cashier_desk_utilization = "0";
         $('#support-queue-count').html(support_agent_count);
@@ -175,6 +175,9 @@ var generateNormalizedData = function(supportAgentsCount, cashierAgentsCount) {
         $('#cashier-queue-count').html(cashier_agent_count);
         $('#cashier-desk-count').html(cashier_desk_count);
         $('#exit-count').html(exit_queue_count);
+        $('#positive-val').html('0.00%');
+        $('#neutral-val').html('0.00%');
+        $('#negative-val').html('0.00%');
         updateAvgSupportWaitTime(0);
         updateAvgCashierWaitTime(0);
     }
@@ -204,6 +207,7 @@ var generateNormalizedData = function(supportAgentsCount, cashierAgentsCount) {
         /***average functions*****/
         updateAvgSupportWaitTime: updateAvgSupportWaitTime,
         updateAvgCashierWaitTime: updateAvgCashierWaitTime,
+        updateFeedbacks: updateFeedbacks,
 
         /***movement functions */
         updateCustomers: updateCustomers,

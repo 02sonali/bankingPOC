@@ -1,7 +1,7 @@
 $(document).ready(function() {
     getAnalysisData();
 });
-let dataObj = {};
+
 function getAnalysisData() {
     let promiseOne = new Promise(function(resolve){
         fetch(`data/analysis_data_branch_number_1.json`)
@@ -19,15 +19,15 @@ function getAnalysisData() {
         .then(data => resolve(data))
     });
     Promise.all([promiseOne, promiseTwo, promiseThree]).then(values => {
-        dataObj = normalizeData(values);
-        showLessDetails();
+        let dataObj = normalizeData(values);
+        renderTable(dataObj);
         renderGraphs(dataObj);
     });
 }
 
 function renderGraphs(dataObj) {
-    renderAvgWaitTimeGraph(dataObj);
-    renderUtilizationGraph(dataObj);
+    // renderAvgWaitTimeGraph(dataObj);
+    // renderFeedbackGraph(dataObj);
     renderBranchOneFeedback(dataObj);
     renderBranchTwoFeedback(dataObj);
     renderBranchThreeFeedback(dataObj);
@@ -39,37 +39,47 @@ function getDonutChartOptions(branch) {
             trigger: 'item',
             formatter: '{a} <br/>{b}: {c} ({d}%)'
         },
-        color: ['#48C9B0', '#99A3A4', '#E74C3C'],
         series: [
             {
-                name: branch,
+                name: 'Simulated Results',
                 type: 'pie',
-                radius: ['50%', '70%'],
-                avoidLabelOverlap: false,
+                selectedMode: 'single',
+                radius: [0, '30%'],
                 label: {
-                    color: '#000',
-                    fontSize: '20',
-                    position: 'center',
-                    formatter: () => {
-                      return branch; 
-                    },
-                },    
+                    show: false
+                },
                 labelLine: {
                     show: false
                 },
                 data: [
-                    {value: 10, name: 'Positive'},
-                    {value: 20, name: 'Neutral'},
-                    {value: 30, name: 'Negative'}
+                    {value: 335, name: 'Positive'},
+                    {value: 679, name: 'Neutral'},
+                    {value: 1548, name: 'Negative'}
+                ]
+            },
+            {
+                name: 'Optimized Results',
+                type: 'pie',
+                radius: ['40%', '55%'],
+                labelLine: {
+                    show: false
+                },
+                label: {
+                    show: false
+                },
+                data: [
+                    {value: 335, name: 'Positive'},
+                    {value: 310, name: 'Neutral'},
+                    {value: 234, name: 'Negative'}
                 ]
             }
         ]
     };
-    if(branch === "Branch 1") {
+    if(branch === "Branch 2") {
         options.legend = {
-            orient: 'vertical',
-            top: 20,
-            left: 10,
+            orient: 'horizontal',
+            top: 4,
+            left: 60,
             data: ['Positive', 'Neutral', 'Negative']
         }
     }
@@ -103,7 +113,7 @@ function renderBranchThreeFeedback(dataObj) {
     branchFeedback.setOption(chartOptions);
 }
 
-function renderUtilizationGraph(dataObj) {
+function renderFeedbackGraph(dataObj) {
     let barOptions = {
         tooltip: {
             trigger: 'axis',
@@ -111,15 +121,13 @@ function renderUtilizationGraph(dataObj) {
                 type: 'shadow'
             }
         },
-        barWidth: 40,
-        color: ['#0f4c75', '#00b7c2'],
         legend: {
-            data: ['Average Support Desk Utilization', 'Average Cashier Desk Utilization']
+            data: ['Branch 1', 'Branch 2', 'Branch 3']
         },
         xAxis: {
             type: 'category',
-            data: ['Branch 1', 'Branch 2', 'Branch 3'],
-            name: 'Branch',
+            data: ['Positive Feedback', 'Neutral Feedback', 'Negative Feedback'],
+            name: 'Feedback',
             nameLocation: "center",
             nameGap: 30,
             nameTextStyle: {
@@ -137,20 +145,26 @@ function renderUtilizationGraph(dataObj) {
         },
         series: [
             {
-                name: 'Average Support Desk Utilization',
+                name: 'Branch 1',
                 type: 'bar',
                 barGap: 0,
-                data: [dataObj.supportUtilization[0], dataObj.supportUtilization[1], dataObj.supportUtilization[2]]
+                data: [dataObj.positiveFeedback[0], dataObj.positiveFeedback[1], dataObj.positiveFeedback[2]]
             },
             {
-                name: 'Average Cashier Desk Utilization',
+                name: 'Branch 2',
                 type: 'bar',
                 stack: 'Average Wait Times',
-                data: [dataObj.cashierUtilization[0], dataObj.cashierUtilization[1], dataObj.cashierUtilization[2]]
+                data: [dataObj.neutralFeedback[0], dataObj.neutralFeedback[1], dataObj.neutralFeedback[2]]
+            },
+            {
+                name: 'Branch 3',
+                type: 'bar',
+                barGap: 0,
+                data: [dataObj.negativeFeedback[0], dataObj.negativeFeedback[1], dataObj.negativeFeedback[2]]
             }
         ]
     };
-    var barChart = echarts.init(document.getElementById('utilization-graph'));
+    var barChart = echarts.init(document.getElementById('feedback-graph'));
     barChart.setOption(barOptions);
 }
 
@@ -162,8 +176,7 @@ function renderAvgWaitTimeGraph(dataObj) {
                 type: 'shadow'
             }
         },
-        barWidth: 40,
-        color: ['#1b6ca8', '#12cad6'],
+        color: ['#48C9B0', '#E74C3C'],
         legend: {
             data: ['Average Support Wait Time', 'Average Cashier Wait Time']
         },
@@ -190,12 +203,13 @@ function renderAvgWaitTimeGraph(dataObj) {
             {
                 name: 'Average Support Wait Time',
                 type: 'bar',
-                barGap: 0,
+                stack: 'Average Wait Times',
                 data: [dataObj.avgSupportWait[0], dataObj.avgSupportWait[1], dataObj.avgSupportWait[2]]
             },
             {
                 name: 'Average Cashier Wait Time',
                 type: 'bar',
+                stack: 'Average Wait Times',
                 data: [dataObj.avgCashierWait[0], dataObj.avgCashierWait[1], dataObj.avgCashierWait[2]]
             },
         ]
@@ -236,31 +250,8 @@ function normalizeData(data) {
     return dataObj;
 }
 
-function showLessDetails() {
-    $('#moreDetails').show();
-    $('#lessDetails').hide();
-    $('#simulation-table').html('');
-    let rows = `
-    <tr>
-        <td scope="row">Support Agents</td>
-        <td>${dataObj.supportAgents[0]}</td>
-        <td>${dataObj.supportAgents[1]}</td>
-        <td>${dataObj.supportAgents[2]}</td>
-    </tr>
-    <tr>
-        <td scope="row">Cashier Agents</td>
-        <td>${dataObj.cashierAgents[0]}</td>
-        <td>${dataObj.cashierAgents[1]}</td>
-        <td>${dataObj.cashierAgents[2]}</td>
-    </tr>
-    `
-    $('#simulation-table').append(rows);
-}
-
-function showCompleteDetails() {
-    $('#moreDetails').hide();
-    $('#lessDetails').show();
-    $('#simulation-table').html('');
+function renderTable(dataObj) {
+    $('#optimization-table').html('');
 
     let rows = `
     <tr>
@@ -330,6 +321,5 @@ function showCompleteDetails() {
         <td>${dataObj.completedCustomers[2]}</td>
     </tr>
     `
-    $('#simulation-table').append(rows);
+    $('#optimization-table').append(rows);
 }
-  

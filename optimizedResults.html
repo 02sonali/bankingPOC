@@ -9,7 +9,7 @@
     </head>
     <body>
         <nav class="navbar navbar-dark bg-dark sticky-top">
-            <div class="navbar-brand cur-pointer" onclick="window.history.go(-1)">
+            <div class="navbar-brand cur-pointer" onclick="window.location = '/'">
                 Bank Queueing System
             </div>
             <img src="./images/nagarro.png" class="justify-content-end nagarro-logo">
@@ -20,15 +20,12 @@
                     <a class="btn btn-secondary" href="simulationAnalysis.html">Go Back</a>
                 </div>
                 <div class="col-4 text-center">
-                    <h1 class="h4">Optimized Results</h1>
-                </div>
-                <div class="col-4 text-right">
-                    <a class="btn btn-secondary" href="simulationAnalysis.html">Generate Simulation Analysis &nbsp; &#8594;</a>
+                    <h1 class="h2">Optimization Results</h1>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-4">
-                    <table class="table table-striped">
+            <div class="row mt-4">
+                <div class="col-5">
+                    <table class="table table-striped table-bordered table-light">
                         <thead>
                         <tr>
                             <th scope="col">#</th>
@@ -37,25 +34,30 @@
                             <th scope="col">Branch Three</th>
                         </tr>
                         </thead>
-                        <tbody id="simulation-table">
-                        
-                        </tbody>
+                        <tbody id="optimization-table"></tbody>
                     </table>
                 </div>
-               <div class="col-8">
-                    <div class="row">
-                        <div class="col-4">
-                            <h1 class="h5">Branch One</h1>
-                        </div>
-                        <div class="col-4">
-                            <h1 class="h5">Branch Two</h1>
-                        </div>
-                        <div class="col-4">
-                            <h1 class="h5">Branch Three</h1>
-                        </div>
-                    </div>
+               <div class="col-7">
+                   <div id="optimized-avg-wait-time-graph" class="graph-container bordered-container mb-3 p-2"></div>
+                   <div id="agent-utilization-graph" class="graph-container bordered-container p-2"></div>
                </div>
            </div>
+            <h2 class="h3 mt-3"> Branch Wise Feedback </h2>
+            <div class="row mt-2 text-center">
+                <div class="col-4">
+                    <div id="branch-one-feedback" class="graph-container"></div>
+                    <h2 class="h5">Branch 1</h2>
+                </div>
+                <div class="col-4">
+                    <div id="branch-two-feedback" class="graph-container"></div>
+                    <h2 class="h5">Branch 2</h2>
+                </div>
+                <div class="col-4">
+                    <div id="branch-three-feedback" class="graph-container"></div>
+                    <h2 class="h5">Branch 3</h2>
+                </div>
+            </div>
+           
         </main>
        
         <script
@@ -64,7 +66,7 @@
         crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/echarts@4.8.0/dist/echarts.simple.min.js" defer></script>
-        <script src="./js/simulationAnalysis.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.8.0/echarts.min.js" integrity="sha512-OvWfXEXFlgwaMYESoKZRrPGq9Ndjcf7pMgp+NjbUNeqEA1OOOUbLgquJGOzvh7H78qinNObGwRiFIj22es61Eg==" crossorigin="anonymous"></script>
+        <script src="./js/optimizedResults.js" defer></script>
     </body>
 </html>

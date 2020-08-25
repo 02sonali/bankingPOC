@@ -48,8 +48,10 @@
 #graph-section .badge{
   padding: .50em 1em;
 }
-
-.graph-container{
-  width: 100%;
-  min-height: 250px;
+#feedback-logo-container{
+  position: absolute;
+  right: 14px;
+  bottom: -31px;
+  font-size: 13px;
+  font-weight: 500;
 }
