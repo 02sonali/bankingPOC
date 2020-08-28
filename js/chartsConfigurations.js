@@ -219,6 +219,23 @@ var configureCharts = function(barData) {
         line2.setOption(line2Options, true);
     }
 
+    function getLastLineChartValues() {
+        for(let i=0; i<filledLine2Options.length; i++) {
+            if(filledLine2Options[i] === false) {
+                line2Options.series[0].data[i] = line2Options.series[0].data[i - 1];
+                filledLine2Options[i] = true;
+            }
+        }
+        for(let i=0; i<filledLine1Options.length; i++) {
+            if(filledLine1Options[i] === false) {
+                line1Options.series[0].data[i] = line1Options.series[0].data[i - 1];
+                filledLine1Options[i] = true;
+            }
+        }
+        line1.setOption(line1Options, true);
+        line2.setOption(line2Options, true);
+    }
+
     function updateBarChart(currentTimeInMinutes) {
         let currentHour = Math.floor(Number(currentTimeInMinutes)/60);
         barOptions.series[0].data[currentHour - 1] = barOptions.series[0].data[currentHour - 1] + 1;
@@ -265,6 +282,7 @@ var configureCharts = function(barData) {
         configureLineChart2: configureLineChart2,
         updateLineChart1: updateLineChart1,
         updateLineChart2: updateLineChart2,
+        getLastLineChartValues: getLastLineChartValues,
         updateBarChart: updateBarChart,
         getBarValuesFromJson: getBarValuesFromJson,
         updateCashierDeskUtilization: updateCashierDeskUtilization,

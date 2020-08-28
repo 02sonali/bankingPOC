@@ -63,6 +63,7 @@ var Stopwatch = function(elem, options) {
             stop();
             options.dataFunctions.timerCompleted();
             options.chartFunctions.getBarValuesFromJson(clock/100);
+            options.chartFunctions.getLastLineChartValues();
             $('#stop-btn').hide();
             $('#reset-btn').show();
             $('#analysis-btn').removeClass('disabled');
