@@ -1,10 +1,11 @@
-var configureCharts = function() {
+var configureCharts = function(barData) {
     let gauge1 = echarts.init(document.getElementById('gauge-1'));
     let gauge2 = echarts.init(document.getElementById('gauge-2'));
     let line1 = echarts.init(document.getElementById('line-1'));
     let line2 = echarts.init(document.getElementById('line-2'));
-    var barChart = echarts.init(document.getElementById('bar-chart'));
-   
+    let barChart = echarts.init(document.getElementById('bar-chart'));
+   let filledLine1Options = [];
+   let filledLine2Options = [];
     let gaugeOptions = {
         series: [
             {
@@ -38,10 +39,11 @@ var configureCharts = function() {
             nameTextStyle: {
                 fontWeight: 'bold'
             },
-            nameGap: 40,
+            nameGap: 50,
             axisLabel: {
                 rotate: 60,
-                interval: 29
+                interval: 29,
+                fontSize: 10
             },
         },
         yAxis: {
@@ -71,13 +73,14 @@ var configureCharts = function() {
             type: 'category',
             data: generateLineAxis(),
             nameLocation: "center",
-            nameGap: 40,
+            nameGap: 50,
             nameTextStyle: {
                 fontWeight: 'bold'
             },
             axisLabel: {
                 rotate: 60,
-                interval: 29
+                interval: 29,
+                fontSize: 10
             },
         },
         yAxis: {
@@ -108,7 +111,7 @@ var configureCharts = function() {
         barWidth: 40,
         xAxis: {
             type: 'category',
-            data: ['1', '2', '3','4', '5', '6', '7'],
+            data: ['8am - 9am', '9am - 10am', '10am - 11am','11am - 12pm', '12pm - 1pm', '1pm - 2pm', '2pm - 3pm'],
             name: 'Time (Hrs)',
             nameLocation: "center",
             nameGap: 30,
@@ -133,16 +136,28 @@ var configureCharts = function() {
 
 
     function generateLineAxis() {
-        let data = []
-        for(let i=0; i<420; i++){
-            data.push(i);
+        var x = 1; //minutes interval
+        var times = []; // time array
+        var tt = 480; // start time
+        var ap = [' am', ' pm']; // AM-PM
+        
+        //loop to increment the time and push results in array
+        for (var i=0;tt<=15*60; i++) {
+          var hh = Math.floor(tt/60); // getting hours of day in 0-24 format
+          var mm = (tt%60); // getting minutes of the hour in 0-55 format
+          times[i] = ("" + ((hh==12)?12:hh%12)).slice(-2) + ':' + ("0" + mm).slice(-2) + ap[Math.floor(hh/12)];
+          tt = tt + x;
         }
-        return data;
+        
+        return times
+       
     }
     function generateLineData() {
         let data = [];
-        for(let i=0; i< 420; i++) {
+        for(let i=0; i< 421; i++) {
             data.push(0);
+            filledLine1Options.push(false);
+            filledLine2Options.push(false);
         }
         return data;
     }
@@ -179,18 +194,51 @@ var configureCharts = function() {
     }
 
     function updateLineChart1(clockTime, avg) {
-        line1Options.series[0].data[Number(clockTime) - 1] = avg;
+        let clock = Number(clockTime);
+        line1Options.series[0].data[clock - 1] = avg;
+        filledLine1Options[clock - 1] = true;
+        for(let i=clock-2; i>=0; i--) {
+            if(filledLine1Options[i]) {
+                break;
+            }
+            line1Options.series[0].data[i] = avg;
+        }
         line1.setOption(line1Options, true);
     }
 
     function updateLineChart2(clockTime, avg) {
-        line2Options.series[0].data[Number(clockTime) - 1] = avg;
+        let clock = Number(clockTime);
+        line2Options.series[0].data[clock - 1] = avg;
+        filledLine2Options[clock - 1] = true;
+        for(let i=clock-2; i>=0; i--) {
+            if(filledLine2Options[i]) {
+                break;
+            }
+            line2Options.series[0].data[i] = avg;
+        }
         line2.setOption(line2Options, true);
     }
 
-    function updateBarChart(currentTimeInMinutes, val) {
-        let currentHour = Math.floor(currentTimeInMinutes/60);
-        barOptions.series[0].data[currentHour - 1] = val;
+    function updateBarChart(currentTimeInMinutes) {
+        let currentHour = Math.floor(Number(currentTimeInMinutes)/60);
+        barOptions.series[0].data[currentHour - 1] = barOptions.series[0].data[currentHour - 1] + 1;
+        barChart.setOption(barOptions, true);
+    }
+
+    function getBarValuesFromJson(currentTimeInMinutes) {
+        let currentHour = Math.floor(Number(currentTimeInMinutes)/60);
+        if(currentHour === 0) {
+            barOptions.series[0].data[0] = barData[0].Completed_count;
+        } else {
+            for(let i=0; i< barData.length; i++) {
+                if(Number(currentTimeInMinutes) >= barData[i].Time) {
+                    for(let j=0; j<currentHour; j++) {
+                        barOptions.series[0].data[j] = barData[j].Completed_count;
+                    }
+                    
+                }
+            }
+        }
         barChart.setOption(barOptions, true);
     }
 
@@ -218,6 +266,7 @@ var configureCharts = function() {
         updateLineChart1: updateLineChart1,
         updateLineChart2: updateLineChart2,
         updateBarChart: updateBarChart,
+        getBarValuesFromJson: getBarValuesFromJson,
         updateCashierDeskUtilization: updateCashierDeskUtilization,
         updateSupportDeskUtilization: updateSupportDeskUtilization,
         resetCharts: resetCharts

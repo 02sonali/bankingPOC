@@ -1,18 +1,1 @@
-{
-    "Branch_Number": 2,
-    "totalSupportAgents": 20,
-    "totalCashierAgents": 3,
-    "customerData": [
-        {
-            "Average_Support_Wait_Time": 34.01,
-            "Average_Cashier_Wait_Time": 10.12,
-            "Completed_Customers": 779,
-            "Positive_Feedback": 14.47,
-            "Neutral_Feedback": 42.55,
-            "Negative_Feedback": 42.97,
-            "Support_Utilization": 85.65,
-            "Cashier_Utilization": 92.3,
-            "financial_transactions": 70
-        }
-    ]
-}
+{"Branch_Number": 2, "totalSupportAgents": 20, "totalCashierAgents": 3, "customerData": [{"Average_Support_Wait_Time": 14.58, "Average_Cashier_Wait_Time": 9.57, "Completed_Customers": 914, "Positive_Feedback": 12.66, "Neutral_Feedback": 38.61, "Negative_Feedback": 48.73, "Support_Utilization": 90.05, "Cashier_Utilization": 93.5, "financial_transactions": 85}]}

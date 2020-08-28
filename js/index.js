@@ -10,7 +10,7 @@ $(document).ready(function() {
     if(selectedVal) {
       $('#start-btn').removeAttr('disabled').removeClass('disabled');
       fetch(`data/data_branch_number_${selectedVal}.json`).then(res => res.json())
-      .then(data => setData(data))
+      .then(data => setData(data, selectedVal))
     } else {
       $('#support-agent-count').html("0");
       $('#cashier-agent-count').html("0");
@@ -20,24 +20,30 @@ $(document).ready(function() {
   });
 });
 
-function setData(data) {
+function setData(data, selectedVal) {
+  let bar_data;
   $('#support-agent-count').html(data.totalSupportAgents);
   $('#cashier-agent-count').html(data.totalCashierAgents);
-  createStopWatch(data);
+  fetch(`data/data_branch_number_${selectedVal}_bar.json`).then(res => res.json())
+  .then(barData => {
+    bar_data = barData; 
+    createStopWatch(data, bar_data);
+  });
 }
 
 function refreshWindow(){
   location.reload()
 }
 
-function createStopWatch(branchData) {
+function createStopWatch(branchData, barData) {
   let dataFunctions = new generateNormalizedData(branchData.totalSupportAgents, branchData.totalCashierAgents);
   let stopwatchElement = $('#stopwatch');
 
   $('#graph-section').show();
+  $('#graph-section').css("visibility", "hidden");
   
   /** chart configurations */
-  chartConfiguration = new configureCharts();
+  chartConfiguration = new configureCharts(barData);
   
   stopwatch =  new Stopwatch(stopwatchElement[0], {data: branchData, dataFunctions: dataFunctions, chartFunctions: chartConfiguration});
   resetSimulation();
@@ -62,6 +68,7 @@ function startSimulation() {
   $('#branch-list').addClass('disabled');
   $('#branch-list').attr('disabled', 'disabled');
   $('#timer').show();
+  $('#graph-section').css("visibility", "visible");
   /*******************************/
   startWatch();
 }

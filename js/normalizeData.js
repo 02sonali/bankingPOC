@@ -2,7 +2,6 @@ let support_agent_count = 0;
 let support_desk_count = 0; 
 let cashier_agent_count = 0;
 let cashier_desk_count = 0; 
-let exit_queue_count = 0;
 let avg_support_wait_time = 0;
 let avg_cashier_wait_time = 0;
 let completed_customers = 0;
@@ -64,12 +63,6 @@ var generateNormalizedData = function(supportAgentsCount, cashierAgentsCount) {
             --cashier_desk_count;
         }
         $('#cashier-desk-count').html(cashier_desk_count);
-    }
-
-    function addToExit() {
-        ++exit_queue_count;
-        $('#exit-count').html(exit_queue_count);
-        showExitAnimation();
     }
 
     function updateAvgSupportWaitTime(val) {
@@ -138,7 +131,8 @@ var generateNormalizedData = function(supportAgentsCount, cashierAgentsCount) {
         });
     }
 
-    function showExitAnimation() {
+    function showExitAnimation(exitCount) {
+        $('#exit-count').html(exitCount);
         $('#exit-block').html("");
         var target = document.getElementById('exit-block');
         for (var i = 0; i < exit_queue_count; i++) {
@@ -185,9 +179,15 @@ var generateNormalizedData = function(supportAgentsCount, cashierAgentsCount) {
     function timerCompleted() {
         support_desk_count = 0;
         cashier_desk_count = 0;
+        cashier_agent_count = 0;
+        support_agent_count = 0
         $('#support-desk-count').html(support_desk_count);
         $('#cashier-desk-count').html(cashier_desk_count);
+        $('#support-queue-count').html(support_agent_count);
+        $('#cashier-queue-count').html(cashier_agent_count);
+        updateCustomers();
         updateSupportDeskCustomers();
+        updateCashierQueue();
         updateCashierDeskCustomers();
     }
 
@@ -200,7 +200,6 @@ var generateNormalizedData = function(supportAgentsCount, cashierAgentsCount) {
         addToCashierDesk: addToCashierDesk,
         removeFromCashierQueue: removeFromCashierQueue,
         removeFromCashierDesk: removeFromCashierDesk,
-        addToExit: addToExit,
         resetData: resetData,
         timerCompleted: timerCompleted,
 
@@ -208,6 +207,7 @@ var generateNormalizedData = function(supportAgentsCount, cashierAgentsCount) {
         updateAvgSupportWaitTime: updateAvgSupportWaitTime,
         updateAvgCashierWaitTime: updateAvgCashierWaitTime,
         updateFeedbacks: updateFeedbacks,
+        showExitAnimation: showExitAnimation,
 
         /***movement functions */
         updateCustomers: updateCustomers,

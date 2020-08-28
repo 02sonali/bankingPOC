@@ -1,0 +1,30 @@
+[
+    {
+        "Time": 60,
+        "Completed_count": 95
+    },
+    {
+        "Time": 120,
+        "Completed_count": 131
+    },
+    {
+        "Time": 180,
+        "Completed_count": 145
+    },
+    {
+        "Time": 240,
+        "Completed_count": 123
+    },
+    {
+        "Time": 300,
+        "Completed_count": 133
+    },
+    {
+        "Time": 360,
+        "Completed_count": 143
+    },
+    {
+        "Time": 420,
+        "Completed_count": 128
+    }
+]

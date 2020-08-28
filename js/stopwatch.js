@@ -29,6 +29,7 @@ var Stopwatch = function(elem, options) {
     
     function stop() {
       if (interval) {
+        options.chartFunctions.getBarValuesFromJson(clock/100);
         clearInterval(interval);
         interval = null;
       }
@@ -61,6 +62,7 @@ var Stopwatch = function(elem, options) {
         } else {
             stop();
             options.dataFunctions.timerCompleted();
+            options.chartFunctions.getBarValuesFromJson(clock/100);
             $('#stop-btn').hide();
             $('#reset-btn').show();
             $('#analysis-btn').removeClass('disabled');
@@ -91,29 +93,22 @@ var Stopwatch = function(elem, options) {
     }
 
     function getDeskCounts(currentTime, data) {
+        let clockTime = currentTime.toString().split('.')[0];
         for(let i=0; i<data.customerData.length; i++){
-            let clockTime = currentTime.toString().split('.')[0];
             let supportQueueTime = data.customerData[i].support_queue_arrival.toString().split('.')[0];
             let supportDeskTime = data.customerData[i].support_entry_time.toString().split('.')[0];
             let supportLeavingTime = data.customerData[i].support_leaving.toString().split('.')[0];
             let cashierQueueTime = data.customerData[i].cashier_queue_arrival.toString().split('.')[0];
             let cashierDeskTime = data.customerData[i].cashier_entry_time.toString().split('.')[0];
             let cashierLeavingTime = data.customerData[i].cashier_leaving.toString().split('.')[0];
+            let completedTime = data.customerData[i].completed_time.toString().split('.')[0];
+
             if(clockTime === supportQueueTime && !data.customerData[i].hasExited && !data.customerData[i].isAdded) {
                 data.customerData[i].isAdded = true;
                 options.dataFunctions.addToSupportQueue();
                 options.dataFunctions.updateCustomers();
-                options.dataFunctions.updateAvgSupportWaitTime(data.customerData[i].avg_support_wait_time);
-                options.dataFunctions.updateAvgCashierWaitTime(data.customerData[i].avg_cashier_wait_time);
-                options.dataFunctions.updateFeedbacks(data.customerData[i].experience_positive_quotient.toFixed(2), data.customerData[i].experience_neutral_quotient.toFixed(2), data.customerData[i].experience_negative_quotient.toFixed(2));
-
-                ++customerArrivalCount;
-                options.chartFunctions.updateLineChart1(clockTime, data.customerData[i].avg_support_wait_time);
-                options.chartFunctions.updateLineChart2(clockTime, data.customerData[i].avg_cashier_wait_time);
+                customerArrivalCount++;
                 options.chartFunctions.updateBarChart(clockTime, customerArrivalCount);
-
-                options.chartFunctions.updateSupportDeskUtilization(data.customerData[i].support_utilization);
-                options.chartFunctions.updateCashierDeskUtilization(data.customerData[i].cashier_utilization);
             } 
             if((clockTime === supportDeskTime) && data.customerData[i].support_entry_time > 0 && !data.customerData[i].hasExited && !data.customerData[i].isAddedToSupportDesk) {
                 data.customerData[i].isAddedToSupportDesk = true;
@@ -123,13 +118,9 @@ var Stopwatch = function(elem, options) {
                 options.dataFunctions.updateCustomers();
                 options.dataFunctions.updateSupportDeskCustomers();
             }
-            if((clockTime === supportLeavingTime) && !data.customerData[i].hasExited) {
+            if(clockTime === supportLeavingTime && !data.customerData[i].hasExited) {
                 options.dataFunctions.removeFromSupportDesk();
                 options.dataFunctions.updateSupportDeskCustomers();
-                if(data.customerData[i].cashier_queue_arrival <= 0) {
-                    data.customerData[i].hasExited = true;
-                    options.dataFunctions.addToExit();
-                }
             }
             if(clockTime === cashierQueueTime && data.customerData[i].cashier_queue_arrival > 0 && !data.customerData[i].hasExited){
                 options.dataFunctions.addToCashierQueue();
@@ -143,12 +134,23 @@ var Stopwatch = function(elem, options) {
                 options.dataFunctions.updateCashierQueue();
                 options.dataFunctions.updateCashierDeskCustomers();
             }
-            if((clockTime === cashierLeavingTime) && (data.customerData[i].cashier_entry_time > 0) && !data.customerData[i].hasExited) {
+            if((clockTime === cashierLeavingTime) && (data.customerData[i].cashier_entry_time > 0) && !data.customerData[i].hasExited ) {
                 options.dataFunctions.removeFromCashierDesk();
                 options.dataFunctions.updateCashierDeskCustomers();
+            }
+            if(clockTime === completedTime && !data.customerData[i].hasExited) {
+                options.dataFunctions.updateAvgSupportWaitTime(data.customerData[i].avg_support_wait_time);
+                options.dataFunctions.updateAvgCashierWaitTime(data.customerData[i].avg_cashier_wait_time);
+                options.dataFunctions.updateFeedbacks(data.customerData[i].experience_positive_quotient.toFixed(2), data.customerData[i].experience_neutral_quotient.toFixed(2), data.customerData[i].experience_negative_quotient.toFixed(2));
+
+                options.chartFunctions.updateSupportDeskUtilization(data.customerData[i].support_utilization);
+                options.chartFunctions.updateCashierDeskUtilization(data.customerData[i].cashier_utilization);
+
+                options.chartFunctions.updateLineChart1(clockTime, data.customerData[i].avg_support_wait_time);
+                options.chartFunctions.updateLineChart2(clockTime, data.customerData[i].avg_cashier_wait_time);
                 
                 data.customerData[i].hasExited = true;
-                options.dataFunctions.addToExit();
+                options.dataFunctions.showExitAnimation(data.customerData[i].completed_customers);
             }
         }
     }

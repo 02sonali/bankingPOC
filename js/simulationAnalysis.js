@@ -39,7 +39,7 @@ function getDonutChartOptions(branch) {
             trigger: 'item',
             formatter: '{a} <br/>{b}: {c} ({d}%)'
         },
-        color: ['#48C9B0', '#99A3A4', '#E74C3C'],
+        color: ['#79d70f', '#99A3A4', '#cd0a0a'],
         series: [
             {
                 name: branch,
@@ -316,19 +316,20 @@ function showCompleteDetails() {
         <td>${dataObj.negativeFeedback[1]}</td>
         <td>${dataObj.negativeFeedback[2]}</td>
     </tr>
-    <tr>
-        <td scope="row">Financial Transactions</td>
-        <td>${dataObj.financialTransactions[0]}</td>
-        <td>${dataObj.financialTransactions[1]}</td>
-        <td>${dataObj.financialTransactions[2]}</td>
-    </tr>
-    <tr>
-        <td scope="row">Completed Customers</td>
-        <td>${dataObj.completedCustomers[0]}</td>
-        <td>${dataObj.completedCustomers[1]}</td>
-        <td>${dataObj.completedCustomers[2]}</td>
-    </tr>
     `
     $('#simulation-table').append(rows);
+
+     // <tr>
+    //     <td scope="row">Financial Transactions</td>
+    //     <td>${dataObj.financialTransactions[0]}</td>
+    //     <td>${dataObj.financialTransactions[1]}</td>
+    //     <td>${dataObj.financialTransactions[2]}</td>
+    // </tr>
+    // <tr>
+    //     <td scope="row">Completed Customers</td>
+    //     <td>${dataObj.completedCustomers[0]}</td>
+    //     <td>${dataObj.completedCustomers[1]}</td>
+    //     <td>${dataObj.completedCustomers[2]}</td>
+    // </tr>
 }
   
